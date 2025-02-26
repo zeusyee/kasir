@@ -53,8 +53,28 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/delete_pelanggan/{id_pelanggan}', [adminController::class, 'deletepelanggan'])->name('admin.delete_pelanggan');
 
     Route::delete('/admin/delete_user/{id_user}', [adminController::class, 'deleteUser'])->name('admin.delete_user');
+
+    //karyawan
+
+    Route::get('karyawan/edit_barang/{id_barang}', [adminController::class, 'editbarangkaryawan'])->name('karyawan.editbarang');
+    Route::put('karyawan/update_barang/{id_barang}', [adminController::class, 'updatebarangkaryawan'])->name('karyawan.updatebarang');
+    Route::get('/karyawan/create-barang', [adminController::class, 'createBarangkaryawan'])->name('karyawan.createBarang');
+
+    // Route untuk menyimpan data barang
+    Route::post('/admin/store-barang', [adminController::class, 'storeBarang'])->name('admin.storeBarang');
+
+    Route::get('/karyawan/createpelanggan', [adminController::class, 'createpelanggankaryawan'])->name('karyawan.createpelanggan');
+    Route::post('/karyawan/storepelanggan', [adminController::class, 'storepelanggankaryawan'])->name('karyawan.storepelanggan');
+
+    Route::get('karyawan/edit_pelanggan/{id_pelanggan}', [adminController::class, 'editpelanggankaryawan'])->name('karyawan.editpelanggan');
+    Route::put('karyawan/update_pelanggan/{id_pelanggan}', [adminController::class, 'updatepelanggankaryawan'])->name('karyawan.updatepelanggan');
+
+    Route::delete('/karyawan/delete_pelanggan/{id_pelanggan}', [adminController::class, 'deletepelanggankaryawan'])->name('karyawan.delete_pelanggan');
    
     // Rute untuk form yang ditambahkan
     Route::get('/from', [adminController::class, 'from'])->name('from');
 
+
+     
 });
+

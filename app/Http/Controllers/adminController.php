@@ -40,7 +40,7 @@ class adminController extends Controller
      */
     public function createbarang()
     {
-        return view('posts');
+        return view('post_barang');
     }
 
     /**
@@ -108,12 +108,13 @@ class adminController extends Controller
         }
     
         // Mengembalikan response dengan data untuk invoice
-        return response()->json([
+    return response()->json([
             'success' => true,
             'penjualan' => $penjualan,
             'detil_penjualan' => $penjualan->detilPenjualan,
             'message' => 'Transaksi berhasil disimpan!',
-        ]);
+          ]);
+        return view('store');
     }
     
 
@@ -152,6 +153,11 @@ class adminController extends Controller
     public function createpelanggan()
     {
         return view('post_pelanggan');
+    }
+
+    public function createpelanggankaryawan()
+    {
+        return view('post_pelanggan_karyawan');
     }
 
     /**
@@ -335,6 +341,77 @@ public function updateUser(Request $request, $id_user)
     return redirect()->route('admin')->with('success', 'User berhasil dihapus!');
 }
 
+public function deletepelanggankaryawan($id_pelanggan)
+{
+    // Cari pelanggan berdasarkan ID
+    $pelanggan = pelanggan::findOrFail($id_pelanggan);
+
+    // Hapus pelanggan
+    $pelanggan->delete();
+
+    // Redirect dengan pesan sukses
+    return redirect()->route('karyawan')->with('success', 'Pelanggan berhasil dihapus!');
+}
+
+
+public function editpelanggankaryawan($id_pelanggan)
+{
+    // Ambil data pelanggan berdasarkan ID
+    $pelanggan = pelanggan::findOrFail($id_pelanggan);
+
+    // Pastikan data ditemukan
+    if (!$pelanggan) {
+        return redirect()->route('karyawan')->with('error', 'Data pelanggan tidak ditemukan.');
+    }
+
+    // Tampilkan form edit dengan data pelanggan
+    return view('edit_pelanggan_karyawan', compact('pelanggan'));
+}
+
+public function updatepelanggankaryawan(Request $request, $id_pelanggan)
+{
+    // Validasi input
+    $request->validate([
+        'nama' => 'required|min:3',
+        'gender' => 'required|in:Laki-laki,Perempuan',
+    ]);
+
+    // Temukan data pelanggan berdasarkan ID
+    $pelanggan = pelanggan::findOrFail($id_pelanggan);
+
+    // Pastikan data ditemukan
+    if (!$pelanggan) {
+        return redirect()->route('karyawan')->with('error', 'Data pelanggan tidak ditemukan.');
+    }
+
+    // Mengubah gender menjadi L atau P
+    $gender = ($request->input('gender') == 'Laki-laki') ? 'L' : 'P';
+
+    // Update data pelanggan dengan data dari form
+    $pelanggan->update([
+        'nama' => $request->input('nama'),
+        'gender' => $gender,
+    ]);
+
+    // Redirect dengan pesan sukses
+    return redirect()->route('karyawan')->with('success', 'Pelanggan berhasil diupdate!');
+}
+public function storepelanggankaryawan(Request $request)
+{
+    $request->validate([
+        'nama' => 'required|min:3',
+        'gender' => 'required|in:L,P'
+    ]);
+
+    // Simpan data pelanggan, ID akan otomatis di-generate
+    pelanggan::create($request->all());
+
+    return redirect()->route('karyawan')->with('success', 'Pelanggan berhasil ditambahkan!');
+}
+
     
+
+
+
     
 }

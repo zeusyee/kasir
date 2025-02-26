@@ -82,7 +82,7 @@
             <hr>
             <div class="card shadow-sm rounded">
                 <div class="card-body">
-                    <a href="{{ route('admin.createBarang') }}" class="btn btn-md btn-success mb-3">TAMBAH DATA</a>
+                  
                     <table class="table table-bordered" id="barang-table">
                         <thead>
                             <tr>
@@ -90,7 +90,7 @@
                                 <th>Nama Barang</th>
                                 <th>Harga Barang</th>
                                 <th>Stock</th>
-                                <th>Aksi</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -102,13 +102,7 @@
                                 <td>{{ $barang->harga_barang }}</td>
                                 <td>{{ $barang->stock }}</td>
                                 <td>
-                                    <a href="{{ route('admin.editbarang', $barang->id_barang) }}" class="btn btn-primary btn-sm">Edit</a>
-                                    <form action="{{ route('admin.delete_barang', $barang->id_barang) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus item ini?')"style="display:inline-block;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-danger btn-sm" onclick="">Hapus</button>
-                                    </form>
-                                </td>
+                                   
                             </tr>
                             @endforeach
                             @if($barangs->isEmpty())
@@ -129,7 +123,7 @@
             <hr>
             <div class="card shadow-sm rounded">
                 <div class="card-body">
-                    <a href="{{ route('admin.createpelanggan') }}" class="btn btn-md btn-success mb-3">TAMBAH DATA</a>
+                    <a href="{{ route('karyawan.createpelanggan') }}" class="btn btn-md btn-success mb-3">TAMBAH DATA</a>
                     <table class="table table-bordered" id="pelanggan-table">
                         <thead>
                             <tr>
@@ -147,8 +141,8 @@
                                 <td>{{ $pelanggan->nama }}</td>
                                 <td>{{ $pelanggan->gender }}</td>
                                 <td>
-                                    <a href="{{ route('admin.editpelanggan', $pelanggan->id_pelanggan) }}" class="btn btn-primary btn-sm">Edit</a>
-                                    <form action="{{ route('admin.delete_pelanggan', $pelanggan->id_pelanggan) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pelanggan ini?')"style="display:inline-block;">
+                                    <a href="{{ route('karyawan.editpelanggan', $pelanggan->id_pelanggan) }}" class="btn btn-primary btn-sm">Edit</a>
+                                    <form action="{{ route('karyawan.delete_pelanggan', $pelanggan->id_pelanggan) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pelanggan ini?')"style="display:inline-block;">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-danger btn-sm" onclick="">Hapus</button>
@@ -173,6 +167,23 @@
             <div class="card shadow-sm rounded">
                 <div class="card-body">
                     <table class="table table-bordered" id="inner-table">
+                    <form action="" method="get">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="tanggal_awal">Tanggal Awal</label>
+                                <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control" value="{{ request()->input('tanggal_awal') }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tanggal_akhir">Tanggal Akhir</label>
+                                <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" value="{{ request()->input('tanggal_akhir') }}">
+                            </div>
+                            <div class="col-md-4 mt-4">
+                                <button type="submit" class="btn btn-primary w-100 mb-2">Tampilkan Laporan</button>
+                                <a href="{{ url()->current() }}" class="btn btn-success w-100">Tampilkan Semua</a>
+                            </div>
+                        </div>
+                    </form>
+                    <table class="table table-bordered mt-4" id="inner-table">
                         <thead>
                             <tr>
                                 <th>ID TRANSAKSI</th>
@@ -184,6 +195,20 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $tanggal_awal = request()->input('tanggal_awal');
+                                $tanggal_akhir = request()->input('tanggal_akhir');
+        
+                                if ($tanggal_awal && $tanggal_akhir) {
+                                    $penjualans = App\Models\Penjualan::whereBetween('tgl_transaksi', [$tanggal_awal, $tanggal_akhir])
+                                        ->with('detilPenjualan')
+                                        ->get();
+                                } else {
+                                    $penjualans = App\Models\Penjualan::with('detilPenjualan')
+                                        ->get();
+                                }
+                            @endphp
+
                             @foreach ($penjualans as $penjualan)
                                 @foreach ($penjualan->detilPenjualan as $detil)
                                     <tr>
@@ -206,7 +231,6 @@
                 </div>
             </div>
         </div>
-        
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
